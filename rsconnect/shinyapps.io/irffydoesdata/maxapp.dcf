@@ -1,0 +1,12 @@
+name: maxapp
+title: maxapp
+username: irffydoesdata
+account: irffydoesdata
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12494199
+bundleId: 9011927
+url: https://irffydoesdata.shinyapps.io/maxapp/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
