@@ -17,8 +17,7 @@ dashboardPage(
   
   
   
-  dashboardHeader(title = tags$img(src='/logo.png',height = "70px",
-                                   width = "150px")),
+  dashboardHeader(title = sprintf("Earthquake  \n Dashboard")),
   dashboardSidebar(width = "17vw",
     
     
