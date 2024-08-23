@@ -15,7 +15,7 @@ library(ggplot2)
 options(warn=-1)
 Generate_selectize<-function(data,column,label){
   
-  
+  #selectize input allows for multiple selection with more control for a better user experince
   
   selectizeInput(column, label,choices = c(sort(unique(data[,column]))),selected = "All",multiple = T,options = list(
     plugins = list("remove_button"),
@@ -34,7 +34,7 @@ filter_selectize_data<-function(session,data,column,input_list){
   return(data)
 }
 
-histogram <- function(data,column,bin_width,seq){
+histogram <- function(data,column,bin_width,seq){ #function takes the dataset - a numeric column binwidth and the sequence for the breaks on the x axis
   #data<-dataset
   
   plot <- ggplot(data ,aes(x=get(column),text=stat(count)))+geom_histogram(binwidth  =bin_width ,color="white", boundary = 0,size=1,fill="#25EAC9")+
@@ -57,7 +57,7 @@ histogram <- function(data,column,bin_width,seq){
     )+scale_y_continuous(expand  =c(0,0.2))+xlab(label = column)
   
   
-  max_y <- ggplot_build(plot)$layout$panel_scales_y[[1]]$range$range[2]
+  max_y <- ggplot_build(plot)$layout$panel_scales_y[[1]]$range$range[2] # to resize the histogram bounds for a reactive plot
   
   plot<- plot +coord_cartesian(ylim=c(0,max_y+10))
 
@@ -68,18 +68,18 @@ histogram <- function(data,column,bin_width,seq){
 # Define server logic required to draw a histogram
 function(input, output, session) {
 
-  dataset <<- read.csv("www/eq_mag5plus_2014_2024.csv") 
+  dataset <- read.csv("www/eq_mag5plus_2014_2024.csv") 
   dataset$year <- substr(dataset$time,1,4)
   
-  output$Selectyear <- renderUI({Generate_selectize(dataset,"year","Year")})
+  output$Selectyear <- renderUI({Generate_selectize(dataset,"year","Year")}) #render input based on dataset 
   
-  filtered_Map_Data <-reactive({ filter_selectize_data(session,dataset,"year",input$year) })
+  filtered_Data <-reactive({ filter_selectize_data(session,dataset,"year",input$year) }) # filter data for input
   
    
   
   output$myplot <- renderLeaflet({
     
-    df_map <<- filtered_Map_Data()
+    df_map <- filtered_Data()
     
 
    pal <- colorNumeric(
@@ -98,14 +98,14 @@ function(input, output, session) {
   
   
     output$hist <- renderPlotly({
-      df_hist <- filtered_Map_Data()
+      df_hist <- filtered_Data()
 
       histogram(df_hist,"mag",bin_width = 0.2,seq =seq(floor(min(df_hist$mag)),ceiling(max(df_hist$mag)),0.2))
 
     })
 
     output$hist2 <- renderPlotly({
-      df_hist <- filtered_Map_Data()
+      df_hist <- filtered_Data()
       
       histogram(df_hist,"depth",bin_width = 50,seq = seq(floor(min(df_hist$depth)),ceiling(max(df_hist$depth)),50 ))
       
